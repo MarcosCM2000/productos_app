@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
 class AuthBackgound extends StatelessWidget {
-  const AuthBackgound({super.key});
+  const AuthBackgound({super.key, required this.child});
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.red,
+      color: Color.fromARGB(255, 255, 254, 254),
       width: double.infinity,
       height: double.infinity,
-      child: Stack(children: const [_PurpleBox()]),
+      child: Stack(children: [_PurpleBox(), _HeaderIcon(), this.child]),
     );
   }
 }
@@ -43,10 +45,10 @@ class _PurpleBox extends StatelessWidget {
   }
 
   BoxDecoration _purpleBackground() => const BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Color.fromRGBO(63, 63, 156, 1),
-        Color.fromRGBO(90, 70, 178, 1),
-      ]));
+      gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [Colors.yellow, Colors.red, Colors.indigo, Colors.teal]));
 }
 
 class _Bubble extends StatelessWidget {
@@ -61,5 +63,19 @@ class _Bubble extends StatelessWidget {
           borderRadius: BorderRadius.circular(100),
           color: const Color.fromRGBO(255, 255, 255, 0.05)),
     );
+  }
+}
+
+class _HeaderIcon extends StatelessWidget {
+  const _HeaderIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+        child: Container(
+      width: double.infinity,
+      height: 200,
+      child: const Icon(Icons.person_pin, color: Colors.white, size: 100),
+    ));
   }
 }
