@@ -98,17 +98,27 @@ class _LoginForm extends StatelessWidget {
                   disabledColor: Colors.grey,
                   elevation: 0,
                   color: Colors.deepPurple,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                  onPressed: loginForm.isLoading
+                      ? null
+                      : () async {
+                          //  Quitar teclado
+                          FocusScope.of(context).unfocus();
+                          if (!loginForm.isValidForm()) return;
+                          loginForm.isLoading = true;
+                          //  Simular validacion a BD
+                          await Future.delayed(const Duration(seconds: 2));
+                          //  Validar en back end
+                          loginForm.isLoading = false;
+                          //  Navigator.pushReplacementNamed(context, 'home');
+                        },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 80, vertical: 15),
                     child: Text(
-                      'Ingresar',
-                      style: TextStyle(color: Colors.white),
+                      loginForm.isLoading ? 'Espere' : 'Ingresar',
+                      style: const TextStyle(color: Colors.white),
                     ),
-                  ),
-                  onPressed: () {
-                    if (!loginForm.isValidForm()) return;
-                    Navigator.pushReplacementNamed(context, 'home');
-                  })
+                  ))
             ],
           )),
     );
