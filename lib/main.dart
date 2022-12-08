@@ -5,7 +5,7 @@ import 'package:productos_app/screens/screens.dart';
 import 'package:productos_app/services/services.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const AppState());
 }
 
 class AppState extends StatelessWidget {

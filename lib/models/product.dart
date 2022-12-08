@@ -22,6 +22,7 @@ class Product {
   String name;
   String? picture;
   double price;
+  String? id;
 
   factory Product.fromJson(Map<String, dynamic> json) => Product(
         available: json["available"],
