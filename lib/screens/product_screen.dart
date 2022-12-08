@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:productos_app/providers/product_form_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'package:productos_app/services/services.dart';
@@ -11,8 +13,27 @@ class ProductScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productsService = Provider.of<ProductsService>(context);
+
+    return ChangeNotifierProvider(
+        create: (_) => ProductFormProvider(productsService.selectedProduct),
+        child: _ProductScreenBody(productsService: productsService));
+    //  return _ProductScreenBody(productsService: productsService);
+  }
+}
+
+class _ProductScreenBody extends StatelessWidget {
+  const _ProductScreenBody({
+    Key? key,
+    required this.productsService,
+  }) : super(key: key);
+
+  final ProductsService productsService;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
+        //  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         child: Column(children: [
           Stack(
             children: [
@@ -25,7 +46,7 @@ class ProductScreen extends StatelessWidget {
                       icon: const Icon(
                         Icons.arrow_back_ios_new,
                         size: 40,
-                        color: Colors.white,
+                        color: Colors.black,
                       ))),
               Positioned(
                   top: 60,
@@ -37,7 +58,7 @@ class ProductScreen extends StatelessWidget {
                       icon: const Icon(
                         Icons.camera_alt_outlined,
                         size: 40,
-                        color: Colors.white,
+                        color: Colors.black,
                       )))
             ],
           ),
@@ -62,6 +83,8 @@ class _ProductForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productForm = Provider.of<ProductFormProvider>(context);
+    final product = productForm.product;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Container(
@@ -73,23 +96,33 @@ class _ProductForm extends StatelessWidget {
           children: [
             const SizedBox(height: 10),
             TextFormField(
+              initialValue: product.name,
               decoration: InputDecorations.authInputDecoration(
                   hintText: 'Nombre del producto', labelText: 'Nombre:'),
+              onChanged: ((value) => product.name = value),
+              //  TODO: validator
             ),
             const SizedBox(height: 30),
             TextFormField(
+              initialValue: '${product.price}',
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+              ],
               keyboardType: TextInputType.number,
               decoration: InputDecorations.authInputDecoration(
                   hintText: '\$100', labelText: 'Precio:'),
+              onChanged: ((value) => {
+                    double.tryParse(value) == null
+                        ? product.price = 0
+                        : product.price = double.parse(value)
+                  }),
             ),
             const SizedBox(height: 30),
             SwitchListTile.adaptive(
-                value: true,
+                value: product.available,
                 title: const Text('Disponible'),
                 activeColor: Colors.indigo,
-                onChanged: (value) => {
-                      //  TODO: PENDIENTE
-                    })
+                onChanged: (value) => {productForm.updateAvailability(value)})
           ],
         )),
       ),
