@@ -11,12 +11,12 @@ String productToJson(Map<String, Product> data) => json.encode(
     Map.from(data).map((k, v) => MapEntry<String, dynamic>(k, v.toJson())));
 
 class Product {
-  Product({
-    required this.available,
-    required this.name,
-    this.picture,
-    required this.price,
-  });
+  Product(
+      {required this.available,
+      required this.name,
+      this.picture,
+      required this.price,
+      this.id});
 
   bool available;
   String name;
@@ -37,4 +37,6 @@ class Product {
         "picture": picture,
         "price": price,
       };
+  Product copy() => Product(
+      available: available, name: name, price: price, picture: picture, id: id);
 }
