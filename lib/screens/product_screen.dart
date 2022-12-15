@@ -70,7 +70,6 @@ class _ProductScreenBody extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.save_outlined),
         onPressed: () async => {
-          //  TODO: Guardar producto
           if (productForm.isValidForm())
             await productsService.saveOrCreateProduct(productForm.product)
         },
