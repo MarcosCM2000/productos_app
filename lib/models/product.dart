@@ -31,12 +31,15 @@ class Product {
         price: json["price"].toDouble(),
       );
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toMap() => {
         "available": available,
         "name": name,
         "picture": picture,
         "price": price,
       };
+
+  String toJson() => json.encode(toMap());
+
   Product copy() => Product(
       available: available, name: name, price: price, picture: picture, id: id);
 }

@@ -31,6 +31,7 @@ class _ProductScreenBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productForm = Provider.of<ProductFormProvider>(context);
     return Scaffold(
       body: SingleChildScrollView(
         //  keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -68,8 +69,10 @@ class _ProductScreenBody extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.save_outlined),
-        onPressed: () => {
+        onPressed: () async => {
           //  TODO: Guardar producto
+          if (productForm.isValidForm())
+            await productsService.saveOrCreateProduct(productForm.product)
         },
       ),
     );
@@ -92,39 +95,42 @@ class _ProductForm extends StatelessWidget {
         width: double.infinity,
         decoration: _buildBoxDecoration(),
         child: Form(
+            key: productForm.formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
-          children: [
-            const SizedBox(height: 10),
-            TextFormField(
-              initialValue: product.name,
-              decoration: InputDecorations.authInputDecoration(
-                  hintText: 'Nombre del producto', labelText: 'Nombre:'),
-              onChanged: ((value) => product.name = value),
-              //  TODO: validator
-            ),
-            const SizedBox(height: 30),
-            TextFormField(
-              initialValue: '${product.price}',
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
+              children: [
+                const SizedBox(height: 10),
+                TextFormField(
+                  initialValue: product.name,
+                  decoration: InputDecorations.authInputDecoration(
+                      hintText: 'Nombre del producto', labelText: 'Nombre:'),
+                  onChanged: ((value) => product.name = value),
+                  //  TODO: validator
+                ),
+                const SizedBox(height: 30),
+                TextFormField(
+                  initialValue: '${product.price}',
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^(\d+)?\.?\d{0,2}'))
+                  ],
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecorations.authInputDecoration(
+                      hintText: '\$100', labelText: 'Precio:'),
+                  onChanged: ((value) => {
+                        double.tryParse(value) == null
+                            ? product.price = 0
+                            : product.price = double.parse(value)
+                      }),
+                ),
+                const SizedBox(height: 30),
+                SwitchListTile.adaptive(
+                    value: product.available,
+                    title: const Text('Disponible'),
+                    activeColor: Colors.indigo,
+                    onChanged: (value) => productForm.updateAvailability(value))
               ],
-              keyboardType: TextInputType.number,
-              decoration: InputDecorations.authInputDecoration(
-                  hintText: '\$100', labelText: 'Precio:'),
-              onChanged: ((value) => {
-                    double.tryParse(value) == null
-                        ? product.price = 0
-                        : product.price = double.parse(value)
-                  }),
-            ),
-            const SizedBox(height: 30),
-            SwitchListTile.adaptive(
-                value: product.available,
-                title: const Text('Disponible'),
-                activeColor: Colors.indigo,
-                onChanged: (value) => {productForm.updateAvailability(value)})
-          ],
-        )),
+            )),
       ),
     );
   }
