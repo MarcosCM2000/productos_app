@@ -46,6 +46,10 @@ class ProductImage extends StatelessWidget {
         fit: BoxFit.contain,
       );
     }
+    /*return const Image(
+      image: AssetImage('assets/no-image.png'),
+      fit: BoxFit.cover,
+    );*/
     return Image.file(File(picture), fit: BoxFit.cover);
   }
 }

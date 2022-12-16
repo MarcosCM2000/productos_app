@@ -78,4 +78,35 @@ class ProductsService extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<String?> uploadImage() async {
+    if (newPictureFile == null) return null;
+    isSaving = true;
+    notifyListeners();
+
+    final url = Uri.parse(
+        'https://api.cloudinary.com/v1_1/dk71ftwbp/image/upload?upload_preset=jdefufaz');
+
+    final imageUploadRequest = http.MultipartRequest('POST', url);
+    final file =
+        await http.MultipartFile.fromPath('file', newPictureFile!.path);
+
+    imageUploadRequest.files.add(file);
+
+    //  Send request
+    final streamResponse = await imageUploadRequest.send();
+    //  Get resp
+    final resp = await http.Response.fromStream(streamResponse);
+
+    //  check if resp was bad
+    if (resp.statusCode != 200 || resp.statusCode != 201) {
+      print('error');
+      print(resp.body);
+      return null;
+    }
+    newPictureFile = null;
+    final decodedData = json.decode(resp.body);
+    print(decodedData['secure_url']);
+    return decodedData['secure_url'];
+  }
 }
